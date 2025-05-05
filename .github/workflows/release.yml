@@ -22,7 +22,7 @@ jobs:
         run: |
           mv ./helloworld-0.0.${{ github.run_number }}-ubuntu.deb ./ubuntu-package.deb
       - name: Upload Ubuntu Package as Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ubuntu-package
           path: ./ubuntu-package.deb
@@ -52,7 +52,7 @@ jobs:
         run: |
           mv ./helloworld-0.0.${{ github.run_number }}-debian.deb ./debian-package.deb
       - name: Upload Debian Package as Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: debian-package
           path: ./debian-package.deb
@@ -62,13 +62,13 @@ jobs:
     needs: [build, build_debian]
     steps:
       - name: Download Ubuntu Package
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ubuntu-package
           path: ./ 
 
       - name: Download Debian Package
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: debian-package
           path: ./ 
