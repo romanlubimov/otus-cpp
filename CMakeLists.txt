@@ -77,7 +77,7 @@ if (MSVC)
         /W4
     )
     if(WITH_BOOST_TEST)
-        target_compile_options(test_version PRIVATE
+        target_compile_options(test_version_boost PRIVATE
             /W4
         )
     endif()
@@ -89,7 +89,7 @@ else ()
         -Wall -Wextra -pedantic -Werror
     )
     if(WITH_BOOST_TEST)
-        target_compile_options(test_version PRIVATE
+        target_compile_options(test_version_boost PRIVATE
             -Wall -Wextra -pedantic -Werror
         )
     endif()
