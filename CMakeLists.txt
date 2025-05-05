@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 
 set(PATCH_VERSION "1" CACHE INTERNAL "Patch version")
+set(LINUX_DISTR_NAME "unknown" CACHE INTERNAL "Distro name")
 set(PROJECT_VESRION 0.0.${PATCH_VERSION})
 
 project(helloworld VERSION ${PROJECT_VESRION})
@@ -72,6 +73,8 @@ else ()
 endif()
 
 install(TARGETS helloworld_cli RUNTIME DESTINATION bin)
+
+set(CPACK_PACKAGE_FILE_NAME "helloworld-0.0.${PATCH_VERSION}-${LINUX_DISTR_NAME}")
 
 set(CPACK_GENERATOR DEB)
 set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")

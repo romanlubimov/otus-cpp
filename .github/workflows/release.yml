@@ -14,7 +14,7 @@ jobs:
         with:
           submodules: true
       - run: sudo apt-get update && sudo apt-get install libboost-test-dev -y
-      - run: cmake . -DPATCH_VERSION=${{ github.run_number }} -DWITH_BOOST_TEST=ON
+      - run: cmake . -DLINUX_DISTR_NAME=ubuntu -DPATCH_VERSION=${{ github.run_number }} -DWITH_BOOST_TEST=ON
       - run: cmake --build .
       - run: cmake --build . --target test
       - run: cmake --build . --target package
@@ -46,7 +46,7 @@ jobs:
         with:
           submodules: true
       - run: sudo apt-get update && sudo apt-get install libboost-test-dev -y
-      - run: cmake . -DPATCH_VERSION=${{ github.run_number }} -DWITH_BOOST_TEST=ON
+      - run: cmake . -LINUX_DISTR_NAME=debian -DPATCH_VERSION=${{ github.run_number }} -DWITH_BOOST_TEST=ON
       - run: cmake --build .
       - run: cmake --build . --target test
       - run: cmake --build . --target package
