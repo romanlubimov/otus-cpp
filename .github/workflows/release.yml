@@ -14,15 +14,17 @@ jobs:
         with:
           submodules: true
       - run: sudo apt-get update && sudo apt-get install libboost-test-dev -y
-      - run: cmake . -DLINUX_DISTR_NAME=ubuntu -DPATCH_VERSION=${{ github.run_number }} -DWITH_BOOST_TEST=ON
+      - run: sudo apt-get install -y cmake g++  # Убедитесь, что у вас установлены необходимые пакеты
+      - run: cmake . -DLINUX_DISTR_NAME=ubuntu -DPATCH_VERSION=${{ github.run_number }} -DWITH_BOOST_TEST=ON -DWITH_GTEST=ON
       - run: cmake --build .
-      - run: cmake --build . --target test
+      - run: cmake --build . --target test_version_boost
+      - run: cmake --build . --target test_version_gtest
       - run: cmake --build . --target package
       - name: Save Ubuntu Package
         run: |
           mv ./helloworld-0.0.${{ github.run_number }}-ubuntu.deb ./ubuntu-package.deb
       - name: Upload Ubuntu Package as Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: ubuntu-package
           path: ./ubuntu-package.deb
@@ -43,16 +45,17 @@ jobs:
           docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace debian:12 /bin/bash -c "
             apt-get update && \
             apt-get install -y cmake libboost-test-dev g++ && \
-            cmake . -DLINUX_DISTR_NAME=debian -DPATCH_VERSION=${{ github.run_number }} -DWITH_BOOST_TEST=ON && \
+            cmake . -DLINUX_DISTR_NAME=debian -DPATCH_VERSION=${{ github.run_number }} -DWITH_BOOST_TEST=ON -DWITH_GTEST=ON && \
             cmake --build . && \
-            cmake --build . --target test && \
+            cmake --build . --target test_version_boost && \
+            cmake --build . --target test_version_gtest && \
             cmake --build . --target package
           "
       - name: Save Debian Package
         run: |
           mv ./helloworld-0.0.${{ github.run_number }}-debian.deb ./debian-package.deb
       - name: Upload Debian Package as Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: debian-package
           path: ./debian-package.deb
@@ -62,13 +65,13 @@ jobs:
     needs: [build, build_debian]
     steps:
       - name: Download Ubuntu Package
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v3
         with:
           name: ubuntu-package
           path: ./ 
 
       - name: Download Debian Package
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v3
         with:
           name: debian-package
           path: ./ 

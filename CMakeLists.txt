@@ -6,7 +6,8 @@ set(PROJECT_VESRION 0.0.${PATCH_VERSION})
 
 project(helloworld VERSION ${PROJECT_VESRION})
 
-option(WITH_BOOST_TEST "Whether to build Boost test" ON)
+option(WITH_BOOST_TEST "Whether to build Boost test" OFF)
+option(WITH_GTEST "Whether to build Google Test" ON)
 
 configure_file(version.h.in version.h)
 
@@ -26,24 +27,46 @@ target_link_libraries(helloworld_cli PRIVATE
     helloworld
 )
 
+if(WITH_GTEST)
+    include(FetchContent)
+
+    FetchContent_Declare(
+        googletest
+        GIT_REPOSITORY https://github.com/google/googletest.git
+        GIT_TAG        release-1.17.0 
+    )
+
+    FetchContent_MakeAvailable(googletest)
+endif()
+
 if(WITH_BOOST_TEST)
     find_package(Boost COMPONENTS unit_test_framework REQUIRED)
-    add_executable(test_version test_version.cpp)
+    add_executable(test_version_boost test_version.cpp)
 
-    set_target_properties(test_version PROPERTIES
+    set_target_properties(test_version_boost PROPERTIES
         CXX_STANDARD 14
         CXX_STANDARD_REQUIRED ON
     )
 
-    set_target_properties(test_version PROPERTIES
-        COMPILE_DEFINITIONS BOOST_TEST_DYN_LINK
-        INCLUDE_DIRECTORIES ${Boost_INCLUDE_DIR}
-    )
-
-    target_link_libraries(test_version
+    target_link_libraries(test_version_boost
         ${Boost_LIBRARIES}
         helloworld
     )
+
+    enable_testing()
+    add_test(NAME test_version_boost COMMAND test_version_boost)
+endif()
+
+if(WITH_GTEST)
+    add_executable(test_version_gtest test_version_gtest.cpp)
+
+    target_link_libraries(test_version_gtest
+        gtest_main
+        helloworld
+    )
+
+    enable_testing()
+    add_test(NAME test_version_gtest COMMAND test_version_gtest)
 endif()
 
 if (MSVC)
@@ -82,8 +105,3 @@ set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
 set(CPACK_PACKAGE_CONTACT example@example.com)
 include(CPack)
-
-if(WITH_BOOST_TEST)
-    enable_testing()
-    add_test(test_version test_version)
-endif()
