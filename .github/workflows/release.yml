@@ -44,7 +44,7 @@ jobs:
         run: |
           docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace debian:12 /bin/bash -c "
             apt-get update && \
-            apt-get install -y cmake libboost-test-dev g++ && \
+            apt-get install -y cmake libboost-test-dev g++ git && \
             cmake . -DLINUX_DISTR_NAME=debian -DPATCH_VERSION=${{ github.run_number }} -DWITH_BOOST_TEST=ON -DWITH_GTEST=ON && \
             cmake --build . && \
             cmake --build . --target test_version_boost && \
