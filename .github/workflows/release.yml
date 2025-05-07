@@ -3,8 +3,7 @@ name: 'C++ CI'
 on:
   push:
     branches:
-      - master
-      - feature/github_actions
+      - '*'
 
 jobs:
   build:
@@ -14,7 +13,7 @@ jobs:
         with:
           submodules: true
       - run: sudo apt-get update && sudo apt-get install libboost-test-dev -y
-      - run: sudo apt-get install -y cmake g++  # Убедитесь, что у вас установлены необходимые пакеты
+      - run: sudo apt-get install -y cmake g++
       - run: cmake . -DLINUX_DISTR_NAME=ubuntu -DPATCH_VERSION=${{ github.run_number }} -DWITH_BOOST_TEST=ON -DWITH_GTEST=ON
       - run: cmake --build .
       - run: cmake --build . --target test_version_boost
@@ -22,7 +21,7 @@ jobs:
       - run: cmake --build . --target package
       - name: Save Ubuntu Package
         run: |
-          mv ./helloworld-0.0.${{ github.run_number }}-ubuntu.deb ./ubuntu-package.deb
+          mv ./ip_filter-0.0.${{ github.run_number }}-ubuntu.deb ./ubuntu-package.deb
       - name: Upload Ubuntu Package as Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -53,7 +52,7 @@ jobs:
           "
       - name: Save Debian Package
         run: |
-          mv ./helloworld-0.0.${{ github.run_number }}-debian.deb ./debian-package.deb
+          mv ./ip_filter-0.0.${{ github.run_number }}-debian.deb ./debian-package.deb
       - name: Upload Debian Package as Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -95,7 +94,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./ubuntu-package.deb
-          asset_name: helloworld-0.0.${{ github.run_number }}-ubuntu.deb
+          asset_name: ip_filter-0.0.${{ github.run_number }}-ubuntu.deb
           asset_content_type: application/vnd.debian.binary-package
 
       - name: Upload Debian Release Asset
@@ -106,5 +105,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./debian-package.deb
-          asset_name: helloworld-0.0.${{ github.run_number }}-debian.deb
+          asset_name: ip_filter-0.0.${{ github.run_number }}-debian.deb
           asset_content_type: application/vnd.debian.binary-package

@@ -11,20 +11,16 @@ option(WITH_GTEST "Whether to build Google Test" ON)
 
 configure_file(version.h.in version.h)
 
-add_executable(helloworld_cli main.cpp)
-add_library(helloworld lib.cpp)
+add_executable(ip_filter main.cpp
+    ipv4address.h ipv4address.cpp)
 
-set_target_properties(helloworld_cli helloworld PROPERTIES
-    CXX_STANDARD 14
+set_target_properties(ip_filter PROPERTIES
+    CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
 )
 
-target_include_directories(helloworld
+target_include_directories(ip_filter
     PRIVATE "${CMAKE_BINARY_DIR}"
-)
-
-target_link_libraries(helloworld_cli PRIVATE
-    helloworld
 )
 
 if(WITH_GTEST)
@@ -41,63 +37,40 @@ endif()
 
 if(WITH_BOOST_TEST)
     find_package(Boost COMPONENTS unit_test_framework REQUIRED)
-    add_executable(test_version_boost test_version.cpp)
+    add_executable(test_boost test_boost.cpp ipv4address.cpp)
 
-    set_target_properties(test_version_boost PROPERTIES
-        CXX_STANDARD 14
+    set_target_properties(test_boost PROPERTIES
+        CXX_STANDARD 17
         CXX_STANDARD_REQUIRED ON
     )
 
-    target_link_libraries(test_version_boost
+    target_link_libraries(test_boost
         ${Boost_LIBRARIES}
-        helloworld
     )
 
     enable_testing()
-    add_test(NAME test_version_boost COMMAND test_version_boost)
+    add_test(NAME test_boost COMMAND test_boost)
 endif()
 
 if(WITH_GTEST)
-    add_executable(test_version_gtest test_version_gtest.cpp)
+    add_executable(test_gtest test_gtest.cpp ipv4address.cpp)
 
-    target_link_libraries(test_version_gtest
+    set_target_properties(test_gtest PROPERTIES
+        CXX_STANDARD 17
+        CXX_STANDARD_REQUIRED ON
+    )
+
+    target_link_libraries(test_gtest
         gtest_main
-        helloworld
     )
 
     enable_testing()
-    add_test(NAME test_version_gtest COMMAND test_version_gtest)
+    add_test(NAME test_gtest COMMAND test_gtest)
 endif()
 
-if (MSVC)
-    target_compile_options(helloworld_cli PRIVATE
-        /W4
-    )
-    target_compile_options(helloworld PRIVATE
-        /W4
-    )
-    if(WITH_BOOST_TEST)
-        target_compile_options(test_version_boost PRIVATE
-            /W4
-        )
-    endif()
-else ()
-    target_compile_options(helloworld_cli PRIVATE
-        -Wall -Wextra -pedantic -Werror
-    )
-    target_compile_options(helloworld PRIVATE
-        -Wall -Wextra -pedantic -Werror
-    )
-    if(WITH_BOOST_TEST)
-        target_compile_options(test_version_boost PRIVATE
-            -Wall -Wextra -pedantic -Werror
-        )
-    endif()
-endif()
+install(TARGETS ip_filter RUNTIME DESTINATION bin)
 
-install(TARGETS helloworld_cli RUNTIME DESTINATION bin)
-
-set(CPACK_PACKAGE_FILE_NAME "helloworld-0.0.${PATCH_VERSION}-${LINUX_DISTR_NAME}")
+set(CPACK_PACKAGE_FILE_NAME "ip_filter-0.0.${PATCH_VERSION}-${LINUX_DISTR_NAME}")
 
 set(CPACK_GENERATOR DEB)
 set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
