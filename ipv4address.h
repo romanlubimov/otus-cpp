@@ -3,6 +3,7 @@
 #include <string>
 #include <array>
 #include <vector>
+#include <cstdint> // int types for ubuntu building
 
 class IPv4Address
 {
