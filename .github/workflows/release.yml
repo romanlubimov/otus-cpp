@@ -16,8 +16,8 @@ jobs:
       - run: sudo apt-get install -y cmake g++
       - run: cmake . -DLINUX_DISTR_NAME=ubuntu -DPATCH_VERSION=${{ github.run_number }} -DWITH_BOOST_TEST=ON -DWITH_GTEST=ON
       - run: cmake --build .
-      - run: cmake --build . --target test_version_boost
-      - run: cmake --build . --target test_version_gtest
+      - run: cmake --build . --target test_boost
+      - run: cmake --build . --target test_gtest
       - run: cmake --build . --target package
       - name: Save Ubuntu Package
         run: |
@@ -46,8 +46,8 @@ jobs:
             apt-get install -y cmake libboost-test-dev g++ git && \
             cmake . -DLINUX_DISTR_NAME=debian -DPATCH_VERSION=${{ github.run_number }} -DWITH_BOOST_TEST=ON -DWITH_GTEST=ON && \
             cmake --build . && \
-            cmake --build . --target test_version_boost && \
-            cmake --build . --target test_version_gtest && \
+            cmake --build . --target test_boost && \
+            cmake --build . --target test_gtest && \
             cmake --build . --target package
           "
       - name: Save Debian Package
